@@ -4,7 +4,6 @@ from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_transform import CTransform
 from src.ecs.components.tags.c_tag_enemy import CTagEnemy
 from src.ecs.create.prefabric_creator import create_explosion
-from src.utils.sounds import generate_space_explosion_beep
 
 def system_collision_player_enemy(world:esper.World, player_entity:int, levels_config:dict, explosion_config:dict) -> None:
     components = world.get_components(CSurface, CTransform, CTagEnemy)
@@ -17,8 +16,6 @@ def system_collision_player_enemy(world:esper.World, player_entity:int, levels_c
         enemy_rectangle = CSurface.get_area_relative(c_surface.area, c_transform.position)
         if enemy_rectangle.colliderect(player_rectangle):
             world.delete_entity(enemy_entity)
-            explosion = generate_space_explosion_beep
-            explosion().play()
             create_explosion(world, c_transform.position.copy(), explosion_config)
             player_transform.position.x = initial_x - player_surface.area.width / 2
             player_transform.position.y = initial_y - player_surface.area.height / 2

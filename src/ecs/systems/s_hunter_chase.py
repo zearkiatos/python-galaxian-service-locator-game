@@ -9,6 +9,7 @@ from src.ecs.components.c_transform import CTransform
 from src.ecs.components.c_velocity import CVelocity
 from src.ecs.components.tags.c_tag_enemy_hunter import CTagEnemyHunter
 from src.ecs.components.tags.c_tag_player import CTagPlayer
+from src.engine.service_locator import ServiceLocator
 
 
 def system_hunter_chase(world: esper.World, enemy_info: dict, player_entity: int):
@@ -26,6 +27,7 @@ def system_hunter_chase(world: esper.World, enemy_info: dict, player_entity: int
         if distance_to_player <= enemy_info["Hunter"]["distance_start_chase"]:
             direction = (player_transform.position - hunter_transform.position).normalize()
             hunter_velocity.velocity = direction * enemy_info["Hunter"]["velocity_chase"]
+            ServiceLocator.sounds_service.play(enemy_info["Hunter"]["sound_chase"])
         elif distance_to_player >= enemy_info["Hunter"]["distance_start_return"]:
             if distance_to_initial > 1:
                 direction = (c_hunter.initial_position - hunter_transform.position).normalize()
