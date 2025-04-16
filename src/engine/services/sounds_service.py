@@ -2,7 +2,7 @@ import pygame
 
 
 class SoundsService:
-    def __init__():
+    def __init__(self):
         pass
 
     def play(self, path: str):
