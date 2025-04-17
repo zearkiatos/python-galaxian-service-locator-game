@@ -1,21 +1,22 @@
-FROM python:3.11-slim
 
-# Install system packages for SDL and GUI
+FROM python:3.11-slim AS builder
+
 RUN apt-get update && \
-    apt-get install -y \
-    python3-dev libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev \
-    libsm6 libxext6 libxrender-dev libgl1-mesa-glx \
-    libgl1-mesa-dri \
-    mesa-utils \
-    xvfb \
-    x11-xserver-utils \
-    && pip install pygame \
-    && apt-get clean
-RUN apt-get -y install make
-RUN mkdir -p /tmp/runtime
+apt-get install -y ffmpeg
+
+RUN pip install --no-cache-dir pygbag
 
 WORKDIR /app
-COPY . /app
-RUN make install
 
-CMD [ "sh", "./docker/entrypoint.sh" ]
+COPY . .
+
+CMD ["pygbag", "main.py"]
+
+FROM nginx:alpine
+
+COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=builder /app/build/web /usr/share/nginx/html
+
+EXPOSE 8080
+
+CMD ["nginx", "-g", "daemon off;"]

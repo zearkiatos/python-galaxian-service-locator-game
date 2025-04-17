@@ -3,8 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    env_file:
-      - .env.local
+    ports:
+      - "8080:8080"
     volumes:
       - .:/app
-      - /tmp/.X11-unix:/tmp/.X11-unix
