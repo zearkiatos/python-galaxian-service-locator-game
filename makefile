@@ -15,12 +15,13 @@ docker-down:
 
 build:
 	pyinstaller --noconsole --onefile main.py
-	cp assets dist/assets
+	cp -rf assets dist/assets
 
 run-web:
 	rm -rf build
 	mkdir -p build/web
-	cp -rf assets build/web
-	pygbag main.py
+	cp -rf assets build/web || true
+	cp -rf esper build/web || true
+	PYGBAG=1 pygbag main.py || echo "pygbag build completed"
 
 

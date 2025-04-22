@@ -1,22 +1,43 @@
+FROM python:3.11-alpine AS builder
 
-FROM python:3.11-slim AS builder
+RUN apk add --no-cache \
+    build-base \
+    libffi-dev \
+    musl-dev \
+    gcc \
+    g++ \
+    make \
+    git \
+    bash \
+    cargo \
+    sdl2-dev \
+    sdl2_image-dev \
+    sdl2_mixer-dev \
+    sdl2_ttf-dev \
+    mesa-dev \
+    portmidi-dev \
+    libjpeg-turbo-dev \
+    zlib-dev \
+    freetype-dev \
+    libpng-dev \
+    ffmpeg
 
-RUN apt-get update && \
-apt-get install -y ffmpeg
-
-RUN pip install --no-cache-dir pygbag
+RUN pip install pygbag
 
 WORKDIR /app
 
 COPY . .
 
-CMD ["pygbag", "main.py"]
+RUN make install
+
+RUN make run-web
 
 FROM nginx:alpine
 
-COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
+RUN rm -rf /usr/share/nginx/html/*
+
 COPY --from=builder /app/build/web /usr/share/nginx/html
 
-EXPOSE 8080
+EXPOSE 80
 
 CMD ["nginx", "-g", "daemon off;"]

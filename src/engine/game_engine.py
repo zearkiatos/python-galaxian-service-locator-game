@@ -22,6 +22,7 @@ from src.ecs.systems.s_screen_bounce import system_screen_bounce
 from src.ecs.systems.s_enemy_spawner import system_enemy_spawner
 from src.utils.file_handler import read_json_file
 from src.ecs.components.c_velocity import CVelocity
+from src.config.config import Config
 
 
 class GameEngine:
@@ -30,8 +31,12 @@ class GameEngine:
         pygame.init()
         pygame.display.set_caption(self.window_config["title"])
         sizes = tuple(self.window_config["size"].values())
+        self.config = Config()
         background_color = tuple(self.window_config["bg_color"].values())
-        self.screen = pygame.display.set_mode(sizes, pygame.SCALED)
+        if not self.config.PYGBAG:
+            self.screen = pygame.display.set_mode(sizes, pygame.SCALED)
+        else:
+            self.screen = pygame.display.set_mode(sizes, 0)
         self.clock = pygame.time.Clock()
         self.is_running = False
         self.framerate = self.window_config["framerate"]
